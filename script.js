@@ -3,6 +3,7 @@ let previousNumber = '';
 let operation = null;
 
 function appendNumber(number) {
+    if (number === '.' && currentNumber.includes('.')) return;
     currentNumber += number;
     updateDisplay();
 }
@@ -49,6 +50,11 @@ function clearDisplay() {
     currentNumber = '';
     previousNumber = '';
     operation = null;
+    updateDisplay();
+}
+
+function deleteNumber() {
+    currentNumber = currentNumber.toString().slice(0, -1);
     updateDisplay();
 }
 
