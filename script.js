@@ -1,94 +1,73 @@
-let currentNumber = '';
-let previousNumber = '';
-let operation = null;
+let expression = '';
+let history = [];
 
-function appendNumber(number) {
-    if (number === '.' && currentNumber.includes('.')) return;
-    currentNumber = currentNumber.toString() + number.toString();
-    updateDisplay();
-}
-
-function chooseOperation(op) {
-    if (currentNumber === '') return;
-    if (previousNumber !== '') {
-        calculate();
-    }
-    operation = op;
-    previousNumber = currentNumber;
-    currentNumber = '';
-    updateDisplay();
-}
-
-function calculate() {
-    let result;
-    const prev = parseFloat(previousNumber);
-    const current = parseFloat(currentNumber);
-    if (isNaN(prev) || isNaN(current)) return;
-
-    switch (operation) {
-        case '+':
-            result = prev + current;
-            break;
-        case '-':
-            result = prev - current;
-            break;
-        case '*':
-            result = prev * current;
-            break;
-        case '÷':
-            result = prev / current;
-            break;
-        default:
-            return;
-    }
-    currentNumber = result;
-    operation = null;
-    previousNumber = '';
-    updateDisplay();
+function appendInput(input) {
+  expression += input;
+  updateDisplay();
 }
 
 function clearDisplay() {
-    currentNumber = '';
-    previousNumber = '';
-    operation = null;
-    updateDisplay();
+  expression = '';
+  updateDisplay();
 }
 
-function deleteNumber() {
-    currentNumber = currentNumber.toString().slice(0, -1);
+function deleteInput() {
+  expression = expression.slice(0, -1);
+  updateDisplay();
+}
+
+function calculate() {
+  try {
+    // Evaluate the expression, replacing custom operators with JavaScript operators
+    const sanitizedExpression = expression.replace('÷', '/').replace('×', '*').replace('^', '**');
+    const result = eval(sanitizedExpression);
+    history.push(expression + ' = ' + result);
+    expression = result.toString();
     updateDisplay();
+    updateHistory();
+  } catch {
+    expression = 'Error';
+    updateDisplay();
+  }
 }
 
 function updateDisplay() {
-    document.getElementById('current-operand').innerText = currentNumber;
-    document.getElementById('previous-operand').innerText = previousNumber + ' ' + (operation || '');
+  document.getElementById('current-operand').innerText = expression;
+}
+
+function updateHistory() {
+  document.getElementById('history').innerText = history.join('\n');
 }
 
 function scientificOperation(op) {
-    let result;
-    const current = parseFloat(currentNumber);
+  let result;
+  try {
+    const current = parseFloat(expression);
     if (isNaN(current)) return;
 
     switch (op) {
-        case 'sqrt':
-            result = Math.sqrt(current);
-            break;
-        case 'pow':
-            const exponent = parseFloat(prompt("Enter the exponent:"));
-            result = Math.pow(current, exponent);
-            break;
-        case 'sin':
-            result = Math.sin(current * (Math.PI / 180));
-            break;
-        case 'cos':
-            result = Math.cos(current * (Math.PI / 180));
-            break;
-        case 'tan':
-            result = Math.tan(current * (Math.PI / 180));
-            break;
-        default:
-            return;
+      case 'sqrt':
+        result = Math.sqrt(current);
+        break;
+      case 'square':
+        result = Math.pow(current, 2);
+        break;
+      case 'sin':
+        result = Math.sin(current * (Math.PI / 180));
+        break;
+      case 'cos':
+        result = Math.cos(current * (Math.PI / 180));
+        break;
+      case 'tan':
+        result = Math.tan(current * (Math.PI / 180));
+        break;
+      default:
+        return;
     }
-    currentNumber = result;
+    expression = result.toString();
     updateDisplay();
+  } catch {
+    expression = 'Error';
+    updateDisplay();
+  }
 }
