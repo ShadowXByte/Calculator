@@ -17,7 +17,7 @@ body {
   border-radius: 10px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
   width: 90vw;
-  height: 90vh;
+  height: 80vh; /* Setting height to 80% of the viewport height */
   max-width: 400px;
   max-height: 600px;
 }
