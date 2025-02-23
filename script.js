@@ -4,7 +4,7 @@ let operation = null;
 
 function appendNumber(number) {
     if (number === '.' && currentNumber.includes('.')) return;
-    currentNumber += number;
+    currentNumber = currentNumber.toString() + number.toString();
     updateDisplay();
 }
 
@@ -16,6 +16,7 @@ function chooseOperation(op) {
     operation = op;
     previousNumber = currentNumber;
     currentNumber = '';
+    updateDisplay();
 }
 
 function calculate() {
@@ -34,7 +35,7 @@ function calculate() {
         case '*':
             result = prev * current;
             break;
-        case '/':
+        case '÷':
             result = prev / current;
             break;
         default:
@@ -59,7 +60,8 @@ function deleteNumber() {
 }
 
 function updateDisplay() {
-    document.getElementById('display').value = currentNumber;
+    document.getElementById('current-operand').innerText = currentNumber;
+    document.getElementById('previous-operand').innerText = previousNumber + ' ' + (operation || '');
 }
 
 function scientificOperation(op) {
