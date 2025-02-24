@@ -8,56 +8,42 @@ body {
   font-family: 'Roboto', sans-serif;
   box-sizing: border-box;
 }
-
 .calculator {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto 1fr auto; /* Adjusted to include signature */
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
   background-color: #1c2833;
-  padding: 1rem;
+  padding: 0.8rem;
   border-radius: 10px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-  width: 80vw;
-  height: 72vh; /* 10% less than 80vh */
-  max-width: 360px;
-  max-height: 540px;
-  position: relative;
+  width: 72vw; /* Reduced by 20% */
+  max-width: 320px; /* Reduced by 20% */
 }
-
 .display {
-  grid-column: span 4;
   background-color: #1c2833;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   justify-content: center;
-  padding: 1rem;
+  padding: 0.8rem;
   border-radius: 5px;
   border: 1px solid #34495e;
   color: #fff;
   word-wrap: break-word;
+  overflow: hidden;
+  cursor: text;
 }
-
-.history {
-  font-size: 1rem;
-  opacity: 0.75;
-}
-
 .current-operand {
-  font-size: 1.75rem;
+  font-size: 1.4rem; /* Reduced by 20% */
 }
-
 .buttons {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
-  grid-column: span 4;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
 }
-
 button {
-  font-size: 1.25rem;
-  padding: 0.5rem;
+  font-size: 1rem; /* Reduced by 20% */
+  padding: 0.4rem; /* Reduced by 20% */
   border: none;
   border-radius: 5px;
   background-color: #5d6d7e;
@@ -65,48 +51,38 @@ button {
   cursor: pointer;
   transition: background-color 0.2s, transform 0.1s;
 }
-
 button:hover {
   background-color: #85929e;
 }
-
 button:active {
   background-color: #34495e;
   transform: scale(0.95);
 }
-
 .span-two {
   grid-column: span 2;
 }
-
 button.operation {
   background-color: #f39c12;
 }
-
 button.operation:hover {
   background-color: #d68910;
 }
-
 button.operation:active {
   background-color: #b9770e;
   transform: scale(0.95);
 }
-
 .signature {
-  grid-column: span 4;
   text-align: center;
-  margin-top: -1.5rem; /* Further reduced space above the signature */
+  margin-top: 0.8rem;
 }
-
 .gradient-text {
-  font-size: 1.5rem;
+  font-size: 1.6rem; /* Reduced by 20% */
   font-family: 'Great Vibes', cursive;
   background: linear-gradient(45deg, #ff6b6b, #f39c12, #f39c12, #d68910, #b9770e);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: gradientAnimation 3s ease infinite;
 }
-
 @keyframes gradientAnimation {
   0% {
     background-position: 0% 50%;
@@ -118,26 +94,20 @@ button.operation:active {
     background-position: 0% 50%;
   }
 }
-
 @media (max-width: 600px) {
   .calculator {
-    width: 90vw;
-    height: auto;
+    width: 90vw; /* Use 90% of the screen width */
     max-width: none;
-    max-height: none;
     padding: 1rem;
   }
-
   .display {
     padding: 0.5rem;
   }
-
   button {
     font-size: 1rem;
     padding: 0.5rem;
   }
-
   .gradient-text {
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
 }

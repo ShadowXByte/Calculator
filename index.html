@@ -5,17 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scientific Calculator</title>
     <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Great+Vibes&display=swap" />
+    <link rel="manifest" href="./manifest.json" />
   </head>
   <body>
     <div class="calculator">
-      <div class="display">
-        <div class="history" id="history"></div>
+      <div class="display" contenteditable="true" id="display">
         <div class="current-operand" id="current-operand"></div>
       </div>
       <div class="buttons">
         <button class="span-two" onclick="clearDisplay()">AC</button>
         <button onclick="deleteInput()">DEL</button>
+        <button class="operation" onclick="appendInput('%')">%</button>
+        <button onclick="showPrevious()"><</button>
+        <button onclick="showNext()">></button>
+        <button onclick="appendInput('^-1')">x⁻¹</button>
         <button class="operation" onclick="appendInput('÷')">÷</button>
         <button onclick="appendInput('7')">7</button>
         <button onclick="appendInput('8')">8</button>
@@ -34,12 +37,20 @@
         <button class="span-two" onclick="calculate()">=</button>
         <button onclick="appendInput('(')">(</button>
         <button onclick="appendInput(')')">)</button>
-        <button class="operation" onclick="appendInput('^')">x^y</button>
         <button onclick="scientificOperation('sqrt')">√</button>
         <button onclick="scientificOperation('square')">x²</button>
-        <button onclick="scientificOperation('sin')">sin</button>
-        <button onclick="scientificOperation('cos')">cos</button>
-        <button onclick="scientificOperation('tan')">tan</button>
+        <button onclick="appendInput('x')">x</button>
+        <button onclick="appendInput('y')">y</button>
+        <button onclick="appendInput('z')">z</button>
+        <button onclick="appendInput('log(')">log</button>
+        <button onclick="appendInput('^')">^</button>
+        <button class="trig" id="sin" onclick="appendInput('sin(')">sin</button>
+        <button class="trig" id="cos" onclick="appendInput('cos(')">cos</button>
+        <button class="trig" id="tan" onclick="appendInput('tan(')">tan</button>
+        <button class="trig" id="cosec" onclick="appendInput('cosec(')">cosec</button>
+        <button class="trig" id="sec" onclick="appendInput('sec(')">sec</button>
+        <button class="trig" id="cot" onclick="appendInput('cot(')">cot</button>
+        <button class="toggle" id="toggleTrig" onclick="toggleTrigFunctions()">Trig</button>
       </div>
       <div class="signature">
         <p class="gradient-text">ShadowXByte</p>
