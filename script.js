@@ -15,57 +15,19 @@ function handleInput(event) {
 
 function handleKeyPress(event) {
   const key = event.key;
-  if ((key >= '0' && key <= '9') || key === '.' || key === '+' || key === '-' || key === '*' || key === '/' || key === '(' || key === ')') {
+  if ((key >= '0' && key <= '9') || ['.', '+', '-', '*', '/', '(', ')'].includes(key)) {
     appendInput(key);
   } else if (key === 'Enter') {
     event.preventDefault();
     calculate();
   } else if (key === 'Backspace') {
     deleteInput();
-  } else if (key === 'x' || key === 'X') {
-    appendInput('x');
-  } else if (key === 'y' || key === 'Y') {
-    appendInput('y');
-  } else if (key === 'z' || key === 'Z') {
-    appendInput('z');
-  } else if (key === '%') {
-    appendInput('%');
-  } else if (key === '^') {
-    appendInput('^');
-  } else if (key === 'i' || key === 'I') {
-    appendInput('^-1');
-  } else if (key === 'r' || key === 'R') {
-    scientificOperation('sqrt');
-  } else if (key === 's' || key === 'S') {
-    scientificOperation('square');
-  } else if (key === 'l' || key === 'L') {
-    appendInput('log(');
-  } else if (key === 't' || key === 'T') {
-    appendInput('tan(');
-  } else if (key === 'c' || key === 'C') {
-    appendInput('cos(');
-  } else if (key === 'o' || key === 'O') {
-    appendInput('cot(');
-  } else if (key === 'e' || key === 'E') {
-    appendInput('sec(');
-  } else if (key === 'g' || key === 'G') {
-    appendInput('cosec(');
   }
 }
 
 function appendInput(input) {
-  const displayElement = document.getElementById('current-operand');
-  const selectionStart = displayElement.selectionStart || displayElement.innerText.length;
-  const selectionEnd = displayElement.selectionEnd || displayElement.innerText.length;
-
-  if (selectionStart !== selectionEnd) {
-    expression = expression.slice(0, selectionStart) + input + expression.slice(selectionEnd);
-  } else {
-    expression = expression.slice(0, selectionStart) + input + expression.slice(selectionStart);
-  }
-
+  expression += input;
   updateDisplay();
-  setCaretPosition(displayElement, selectionStart + input.length);
 }
 
 function clearDisplay() {
@@ -74,35 +36,45 @@ function clearDisplay() {
 }
 
 function deleteInput() {
-  const displayElement = document.getElementById('current-operand');
-  const selectionStart = displayElement.selectionStart || displayElement.innerText.length;
-  const selectionEnd = displayElement.selectionEnd || displayElement.innerText.length;
-
-  if (selectionStart !== selectionEnd) {
-    expression = expression.slice(0, selectionStart) + expression.slice(selectionEnd);
-  } else {
-    expression = expression.slice(0, selectionStart - 1) + expression.slice(selectionStart);
-  }
-
+  expression = expression.slice(0, -1);
   updateDisplay();
-  setCaretPosition(displayElement, selectionStart - 1);
 }
 
 function calculate() {
   try {
-    let sanitizedExpression = expression.replace('÷', '/').replace('×', '*').replace('^', '**');
+    let sanitizedExpression = expression
+      .replace(/÷/g, '/')
+      .replace(/×/g, '*')
+      .replace(/\^/g, '**')
+      .replace(/sin\((\d+(\.\d+)?)\)/g, (_, num) => `Math.sin(${(parseFloat(num) * Math.PI) / 180})`)
+      .replace(/cos\((\d+(\.\d+)?)\)/g, (_, num) => `Math.cos(${(parseFloat(num) * Math.PI) / 180})`)
+      .replace(/tan\((\d+(\.\d+)?)\)/g, (_, num) => `Math.tan(${(parseFloat(num) * Math.PI) / 180})`)
+      .replace(/sin⁻¹\((\d+(\.\d+)?)\)/g, (_, num) => `(Math.asin(${num}) * 180 / Math.PI)`)
+      .replace(/cos⁻¹\((\d+(\.\d+)?)\)/g, (_, num) => `(Math.acos(${num}) * 180 / Math.PI)`)
+      .replace(/tan⁻¹\((\d+(\.\d+)?)\)/g, (_, num) => `(Math.atan(${num}) * 180 / Math.PI)`)
+      .replace(/cosec\((\d+(\.\d+)?)\)/g, (_, num) => `1/Math.sin(${(parseFloat(num) * Math.PI) / 180})`)
+      .replace(/sec\((\d+(\.\d+)?)\)/g, (_, num) => `1/Math.cos(${(parseFloat(num) * Math.PI) / 180})`)
+      .replace(/cot\((\d+(\.\d+)?)\)/g, (_, num) => `1/Math.tan(${(parseFloat(num) * Math.PI) / 180})`)
+      .replace(/log\(/g, 'Math.log10(')
+      .replace(/√/g, 'Math.sqrt');
+
     if (/x|y|z/.test(sanitizedExpression)) {
       const x = prompt("Enter the value for x:");
       const y = prompt("Enter the value for y:");
       const z = prompt("Enter the value for z:");
-      sanitizedExpression = sanitizedExpression.replace(/x/g, x).replace(/y/g, y).replace(/z/g, z);
+      sanitizedExpression = sanitizedExpression
+        .replace(/x/g, x)
+        .replace(/y/g, y)
+        .replace(/z/g, z);
     }
+
     const result = eval(sanitizedExpression);
-    history.push(`${expression} = ${result}`);
+    const roundedResult = Math.abs(result) < 1e-10 ? 0 : result;
+    history.push(`${expression} = ${roundedResult}`);
     historyIndex = history.length - 1;
-    expression = result.toString();
+    expression = roundedResult.toString();
     updateDisplay();
-  } catch {
+  } catch (error) {
     expression = 'Error';
     updateDisplay();
   }
@@ -128,10 +100,6 @@ function showNext() {
   }
 }
 
-function scientificOperation(op) {
-  appendInput(`${op}(`);
-}
-
 function toggleTrigFunctions() {
   isInverseTrig = !isInverseTrig;
   const trigButtons = document.querySelectorAll('.trig');
@@ -141,15 +109,33 @@ function toggleTrigFunctions() {
   });
 }
 
+function scientificOperation(op) {
+  switch (op) {
+    case 'sqrt':
+      appendInput('Math.sqrt(');
+      break;
+    case 'square':
+      expression += '**2';
+      updateDisplay();
+      break;
+    case 'inverse':
+      expression += '**-1';
+      updateDisplay();
+      break;
+    default:
+      break;
+  }
+}
+
 function setCaretPosition(elem, caretPos) {
   if (elem != null) {
     if (elem.createTextRange) {
       const range = elem.createTextRange();
       range.move('character', caretPos);
       range.select();
-    } else {
-      elem.setSelectionRange(caretPos, caretPos);
+    } else if (elem.setSelectionRange) {
       elem.focus();
+      elem.setSelectionRange(caretPos, caretPos);
     }
   }
 }
