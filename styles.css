@@ -95,6 +95,9 @@ button.operation:active {
   }
 }
 @media (max-width: 600px) {
+  body {
+    background-color: #1c2833; /* Black background for mobile devices */
+  }
   .calculator {
     width: 90vw; /* Use 90% of the screen width */
     max-width: none;
